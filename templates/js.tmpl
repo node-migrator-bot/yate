@@ -48,13 +48,13 @@ template
         return r%{ Rid };
     }
 
-//template :prologue [ this.type() === 'array' ]
-//
-//    var r%{ Rid } = [];
-//
-//template :prologue [ this.type() === 'object' ]
-//
-//    var r%{ Rid } = {};
+template :prologue [ this.type() === 'array' ]
+
+    var r%{ Rid } = [];
+
+template :prologue [ this.type() === 'object' ]
+
+    var r%{ Rid } = {};
 
 template :prologue
 
@@ -104,9 +104,13 @@ block :output
 
     %{ Exprs :output }
 
-* :prologue [ this.type() === 'nodeset' ]
+* :prologue [ this.type() === 'nodeset' || this.type() === 'array' ]
 
     var r%{ Rid } = [];
+
+* :prologue [ this.type() === 'object' ]
+
+    var r%{ Rid } = {};
 
 * :prologue [ this.type() === 'boolean' ]
 
@@ -291,6 +295,21 @@ scalar :output
 
     %{ Block :output }
 
+// ----------------------------------------------------------------------------------------------------------------- //
+
+object :output
+
+    %{ Block :output }
+
+pair :output [ this.Value.inline() ]
+
+    r%{ Rid }[%{ Key }] = %{ Value };
+
+pair :output
+
+    %{ Value :prologue }
+    %{ Value :output }
+    r%{ Rid } = r%{ Value.Rid };
 
 
 // ----------------------------------------------------------------------------------------------------------------- //
